@@ -10,10 +10,11 @@ using Dates
 nombres_estados_noacento = ["Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Ciudad de Mexico", "Coahuila", "Colima", "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Michoacan", "Morelos", "Mexico", "Nayarit", "Nuevo Leon", "Oaxaca", "Puebla", "Queretaro", "Quintana Roo", "San Luis Potosi", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatan", "Zacatecas"]
 #Their abreviatures:
 abreviaturas_estados = ["AGU", "BCN", "BCS", "CAM", "CHP", "CHH", "CMX", "COA", "COL", "DUR", "GUA", "GRO", "HID", "JAL", "MIC", "MOR", "MEX", "NAY", "NLE", "OAX", "PUE", "QUE", "ROO", "SLP", "SIN", "SON", "TAB", "TAM", "TLA", "VER", "YUC", "ZAC"]
+abreviaturas_estados_ISO = ["MX-AGU", "MX-BCN", "MX-BCS", "MX-CAM", "MX-CHP", "MX-CHH", "MX-CMX", "MX-COA", "MX-COL", "MX-DUR", "MX-GUA", "MX-GRO", "MX-HID", "MX-JAL", "MX-MIC", "MX-MOR", "MX-MEX", "MX-NAY", "MX-NLE", "MX-OAX", "MX-PUE", "MX-QUE", "MX-ROO", "MX-SLP", "MX-SIN", "MX-SON", "MX-TAB", "MX-TAM", "MX-TLA", "MX-VER", "MX-YUC", "MX-ZAC"]
 
 #We load the data for the cases and the location of the states:
 datos = CSV.read("Mexico-COVID-19/Mexico_COVID19.csv", header = 1)
-coordenadas = CSV.read("COVID_databases_scripts/coordinates.csv", header = 1)
+#coordenadas = CSV.read("COVID_databases_scripts/coordinates.csv", header = 1)
 #We define some helpful tags used in the columns of the data for the cases:
 column_keys = ["", "_D", "_R"]
 
@@ -44,13 +45,14 @@ function update_daily_reports(date, update_date)
     for i in 1:32
 
         abreviatura = abreviaturas_estados[i]
+        abreviatura_ISO = abreviaturas_estados_ISO[i]
         estado = nombres_estados_noacento[i]
 
         columnas_datos = Meta.parse.(abreviatura.*column_keys)
         positivos, fallecidos, recuperados = datos_día[columnas_datos] |> Array
-        latitud, longitud = coordenadas[coordenadas.Estado .== estado, :][[:LAT_DECIMAL, :LON_DECIMAL]] |> Array
+        #latitud, longitud = coordenadas[coordenadas.Estado .== estado, :][[:LAT_DECIMAL, :LON_DECIMAL]] |> Array
 
-        información = "$(estado),Mexico,$(fecha_actualización),$(positivos),$(fallecidos),$(recuperados),$(latitud),$(longitud)"
+        información = "$(abreviatura_ISO),$(estado),Mexico,$(update_date),$(positivos),$(fallecidos),$(recuperados)"#,$(latitud),$(longitud)"
         línea = 192 + i
         comando_sed = "sed -i '$(línea)i$(información)' $(archivo)"
 
@@ -60,6 +62,7 @@ function update_daily_reports(date, update_date)
     return "Done"
 end
 
+#= Done
 #We define the update date:
 fecha_actualización = "2020-03-22T23:30:00-06:00"
 
@@ -70,3 +73,4 @@ for date in dates
 
     update_daily_reports(string(date), fecha_actualización)
 end
+=#
