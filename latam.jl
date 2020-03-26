@@ -16,7 +16,8 @@ abreviaturas_estados_ISO = ["MX-AGU", "MX-BCN", "MX-BCS", "MX-CAM", "MX-CHP", "M
 datos = CSV.read("Mexico-COVID-19/Mexico_COVID19.csv", header = 1)
 #coordenadas = CSV.read("COVID_databases_scripts/coordinates.csv", header = 1)
 #We define some helpful tags used in the columns of the data for the cases:
-column_keys = ["", "_D", "_R"]
+#Recovered cases are no longer reported from March 23 onwards
+column_keys = ["", "_D"]
 
 #We define a function to update the daily files:
 #date = "yyyy-mm-dd"
@@ -49,11 +50,10 @@ function update_daily_reports(date, update_date)
         estado = nombres_estados_noacento[i]
 
         columnas_datos = Meta.parse.(abreviatura.*column_keys)
-        positivos, fallecidos, recuperados = datos_día[columnas_datos] |> Array
-        #latitud, longitud = coordenadas[coordenadas.Estado .== estado, :][[:LAT_DECIMAL, :LON_DECIMAL]] |> Array
+        positivos, fallecidos = datos_día[columnas_datos] |> Array
 
-        información = "$(abreviatura_ISO),$(estado),Mexico,$(update_date),$(positivos),$(fallecidos),$(recuperados)"#,$(latitud),$(longitud)"
-        línea = 192 + i
+        información = "$(abreviatura_ISO),$(estado),Mexico,$(update_date),$(positivos),$(fallecidos),"
+        línea = 205 + i
         comando_sed = "sed -i '$(línea)i$(información)' $(archivo)"
 
         run(`sh -c $(comando_sed)`)
@@ -62,15 +62,15 @@ function update_daily_reports(date, update_date)
     return "Done"
 end
 
-#= Done
 #We define the update date:
-fecha_actualización = "2020-03-22T23:30:00-06:00"
+fecha_actualización = "2020-03-25T02:25:00-06:00"
 
 #And we update the files:
-dates = Date("2020-02-28"):Day(1):Date("2020-03-21")
+dates = Date("2020-03-23"):Day(1):Date("2020-03-25")
 
 for date in dates
 
     update_daily_reports(string(date), fecha_actualización)
 end
+#= Done
 =#
