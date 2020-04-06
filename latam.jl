@@ -17,7 +17,7 @@ datos = CSV.read("Mexico-COVID-19/Mexico_COVID19.csv", header = 1)
 #coordenadas = CSV.read("COVID_databases_scripts/coordinates.csv", header = 1)
 #We define some helpful tags used in the columns of the data for the cases:
 #Recovered cases are no longer reported from March 23 onwards
-column_keys = ["", "_D"]
+column_keys = ["", "_D", "_R"]
 
 #We define a function to update the daily files:
 #date = "yyyy-mm-dd"
@@ -50,10 +50,10 @@ function update_daily_reports(date, update_date)
         estado = nombres_estados_noacento[i]
 
         columnas_datos = Meta.parse.(abreviatura.*column_keys)
-        positivos, fallecidos = datos_día[columnas_datos] |> Array
+        positivos, fallecidos, recuperados = datos_día[columnas_datos] |> Array
 
-        información = "$(abreviatura_ISO),$(estado),Mexico,$(update_date),$(positivos),$(fallecidos),"
-        línea = 205 + i
+        información = "$(abreviatura_ISO),Mexico,$(estado),$(update_date),$(positivos),$(fallecidos),$(recuperados)"
+        línea = 259 + i
         comando_sed = "sed -i '$(línea)i$(información)' $(archivo)"
 
         run(`sh -c $(comando_sed)`)
@@ -62,6 +62,7 @@ function update_daily_reports(date, update_date)
     return "Done"
 end
 
+#= Done
 #We define the update date:
 fecha_actualización = "2020-03-25T02:25:00-06:00"
 
@@ -72,5 +73,4 @@ for date in dates
 
     update_daily_reports(string(date), fecha_actualización)
 end
-#= Done
 =#
