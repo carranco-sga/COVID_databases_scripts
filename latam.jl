@@ -33,7 +33,7 @@ function update_daily_reports(date, update_date)
     fecha = Date(date)
 
     #We define the location of the file to update:
-    archivo = "covid-19_latinoamerica/latam_covid_19_data/latam_covid_19_daily_reports/$(año)-$(mes)-$(día).csv"
+    archivo = "covid-19_latinoamerica/latam_covid_19_data/daily_reports/$(año)-$(mes)-$(día).csv"
 
     #We use sed to delete the current values in the files:
     run(`sed -i '/Mexico/d' $(archivo)`)
