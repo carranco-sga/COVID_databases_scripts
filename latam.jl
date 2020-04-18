@@ -13,7 +13,7 @@ abreviaturas_estados = ["AGU", "BCN", "BCS", "CAM", "CHP", "CHH", "CMX", "COA", 
 abreviaturas_estados_ISO = ["MX-AGU", "MX-BCN", "MX-BCS", "MX-CAM", "MX-CHP", "MX-CHH", "MX-CMX", "MX-COA", "MX-COL", "MX-DUR", "MX-GUA", "MX-GRO", "MX-HID", "MX-JAL", "MX-MIC", "MX-MOR", "MX-MEX", "MX-NAY", "MX-NLE", "MX-OAX", "MX-PUE", "MX-QUE", "MX-ROO", "MX-SLP", "MX-SIN", "MX-SON", "MX-TAB", "MX-TAM", "MX-TLA", "MX-VER", "MX-YUC", "MX-ZAC"]
 
 #We load the data for the cases and the location of the states:
-datos = CSV.read("Mexico-COVID-19/Mexico_COVID19.csv", header = 1)
+datos = CSV.read("Mexico-COVID-19/Mexico_COVID19_CTD.csv", header = 1)
 #coordenadas = CSV.read("COVID_databases_scripts/coordinates.csv", header = 1)
 #We define some helpful tags used in the columns of the data for the cases:
 #Recovered cases are no longer reported from March 23 onwards
@@ -53,6 +53,11 @@ function update_daily_reports(date, update_date)
         positivos, fallecidos, recuperados = datos_día[columnas_datos] |> Array
 
         información = "$(abreviatura_ISO),Mexico,$(estado),$(update_date),$(positivos),$(fallecidos),$(recuperados)"
+
+        #Issue #59 in the latam repo: missing => blank
+
+        información = replace(información, r"missing" => s"")
+
         línea = 259 + i
         comando_sed = "sed -i '$(línea)i$(información)' $(archivo)"
 
