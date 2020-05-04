@@ -20,26 +20,16 @@ datos = CSV.read("Mexico-COVID-19/Mexico_COVID19_CTD.csv", header = 1)
 column_keys = ["", "_D", "_R"]
 
 #We define a function to update the daily files:
-#date = "yyyy-mm-dd"
-#update date = "yyyy-mm-ddThh:mm:ss-06:00"
-function update_daily_reports(date, update_date)
-
-    #We get some information from the date
-    día = date[9:10]
-    mes = date[6:7]
-    año = date[1:4]
-
-    #We make the date a proper date for Julia to work with:
-    fecha = Date(date)
+function update_daily_reports(;date = today(), update_date = round(now(UTC), Dates.Second))
 
     #We define the location of the file to update:
-    archivo = "covid-19_latinoamerica/latam_covid_19_data/daily_reports/$(año)-$(mes)-$(día).csv"
+    archivo = "covid-19_latinoamerica/latam_covid_19_data/daily_reports/$(string(date)).csv"
 
     #We use sed to delete the current values in the files:
     run(`sed -i '/Mexico/d' $(archivo)`)
 
     #We get the data for the day:
-    datos_día = filter(row -> row[:Fecha] == fecha, datos)
+    datos_día = filter(row -> row[:Fecha] == date, datos)
 
     #For each state, we get the data, construct a string to put in a specific line in the file with the relevant information.
     #The line is the one that originally was allocated for us:
@@ -67,15 +57,4 @@ function update_daily_reports(date, update_date)
     return "Done"
 end
 
-#= Done
-#We define the update date:
-fecha_actualización = "2020-03-25T02:25:00-06:00"
-
-#And we update the files:
-dates = Date("2020-03-23"):Day(1):Date("2020-03-25")
-
-for date in dates
-
-    update_daily_reports(string(date), fecha_actualización)
-end
-=#
+update_daily_reports()
