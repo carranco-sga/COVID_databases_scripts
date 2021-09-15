@@ -20,7 +20,13 @@ datos = CSV.read("Mexico-COVID-19/Mexico_COVID19_CTD.csv", header = 1, DataFrame
 column_keys = ["", "_D", "_R"]
 
 #We define a function to update the daily files:
-function update_daily_reports(;date = today(), update_date = round(now(UTC), Dates.Second))
+function update_daily_reports(;update_date = round(now(UTC), Dates.Second))
+
+    if Time(now()) < Time(19)
+        date = today() - Day(1)
+    else
+        date = today()
+    end
 
     #We define the location of the file to update:
     archivo = "covid-19_latinoamerica/latam_covid_19_data/daily_reports/$(string(date)).csv"
